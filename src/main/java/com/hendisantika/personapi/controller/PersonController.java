@@ -33,27 +33,40 @@ public class PersonController {
         logger.info(data);
         PersonResult result = new PersonResult();
 
-        String gender = data.getResults().get(0).getGender();
-        result.setGender(gender);
-
-        String title = data.getResults().get(0).getName().getTitle();
-        String firstName = data.getResults().get(0).getName().getFirst();
-        String lastName = data.getResults().get(0).getName().getLast();
-        String fullName = title + " " + firstName + " " + lastName;
-        result.setFullName(fullName);
-
-        String street = data.getResults().get(0).getLocation().getStreet();
-        String city = data.getResults().get(0).getLocation().getCity();
-        String address = street + ", " + city;
-        result.setAddress(address);
-
-        String picture = data.getResults().get(0).getPicture().getLarge();
-        result.setPictures(picture);
+        setGender(data, result);
+        setFullName(data, result);
+        setAddress(data, result);
+        setPictures(data, result);
 
         logger.info("========== Modified Data ==========");
         logger.info(result);
 
         return data;
 
+    }
+
+    private void setGender(PersonData data, PersonResult result) {
+        String gender = data.getResults().get(0).getGender();
+        result.setGender(gender);
+    }
+
+    private void setPictures(PersonData data, PersonResult result) {
+        String picture = data.getResults().get(0).getPicture().getLarge();
+        result.setPictures(picture);
+    }
+
+    private void setAddress(PersonData data, PersonResult result) {
+        String street = data.getResults().get(0).getLocation().getStreet();
+        String city = data.getResults().get(0).getLocation().getCity();
+        String address = street + ", " + city;
+        result.setAddress(address);
+    }
+
+    private void setFullName(PersonData data, PersonResult result) {
+        String title = data.getResults().get(0).getName().getTitle();
+        String firstName = data.getResults().get(0).getName().getFirst();
+        String lastName = data.getResults().get(0).getName().getLast();
+        String fullName = title + " " + firstName + " " + lastName;
+        result.setFullName(fullName);
     }
 }
