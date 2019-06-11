@@ -2,6 +2,9 @@ package com.hendisantika.personapi.entity;
 
 import lombok.Data;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by IntelliJ IDEA.
  * Project : person-api
@@ -13,7 +16,7 @@ import lombok.Data;
  */
 @Data
 public class PersonData {
-    private Results[] results;
+    private List<Results> results = new ArrayList<>();
 
     private Info info;
 }

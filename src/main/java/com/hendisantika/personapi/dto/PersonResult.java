@@ -16,4 +16,5 @@ public class PersonResult {
     private String gender;
     private String fullName;
     private String address;
+    private String pictures;
 }
