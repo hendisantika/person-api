@@ -29,7 +29,10 @@ public class PersonController {
         PersonData data = restTemplate.getForObject("https://randomuser.me/api/", PersonData.class);
 
 
-        logger.info("data --> {}", data);
+        logger.info("Origin data --> {}", data);
+
+
+
         return data;
 
     }
