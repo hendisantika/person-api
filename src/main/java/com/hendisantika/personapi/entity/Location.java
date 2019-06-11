@@ -12,8 +12,16 @@ import lombok.Data;
  * Time: 14:19
  */
 @Data
-public class Timezone {
-    private String offset;
+public class Location {
+    private String city;
 
-    private String description;
+    private String street;
+
+    private Timezone timezone;
+
+    private String postcode;
+
+    private Coordinates coordinates;
+
+    private String state;
 }
