@@ -25,7 +25,7 @@ public class PersonController {
     private static Logger logger = LogManager.getLogger(PersonController.class);
 
     @GetMapping("/api/person")
-    PersonData getPerson() {
+    PersonResult getPerson() {
         RestTemplate restTemplate = new RestTemplate();
         PersonData data = restTemplate.getForObject("https://randomuser.me/api/", PersonData.class);
 
@@ -41,8 +41,7 @@ public class PersonController {
         logger.info("========== Modified Data ==========");
         logger.info(result);
 
-        return data;
-
+        return result;
     }
 
     private void setGender(PersonData data, PersonResult result) {
