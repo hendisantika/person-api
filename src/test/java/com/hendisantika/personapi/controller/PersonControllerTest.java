@@ -18,6 +18,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.Collections;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
@@ -73,6 +74,19 @@ public class PersonControllerTest {
         assertEquals(200, response.getStatus());
         assertEquals(mapper.writeValueAsString(expectedResult), mapper.writeValueAsString(expectedResult));
         assertEquals(mapper.writeValueAsString(expectedData), response.getContentAsString());
+    }
+
+    @Test
+    public void getPerson_Negative() throws Exception {
+        PersonData expectedResult = createPersonData();
+
+        when(restTemplate.getForObject(eq("https://randomuser.me/api2/"), eq(PersonData.class)))
+                .thenReturn(expectedResult);
+
+        MockHttpServletResponse response = mockMvc.perform(get("/api/person2"))
+                .andReturn().getResponse();
+
+        assertThat(response.getContentAsString()).isEqualTo("");
     }
 
     private PersonResult createResultData() {
