@@ -1,6 +1,7 @@
 package com.hendisantika.personapi.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hendisantika.personapi.dto.PersonResult;
 import com.hendisantika.personapi.entity.*;
 import org.junit.Before;
 import org.junit.Test;
@@ -66,8 +67,21 @@ public class PersonControllerTest {
         MockHttpServletResponse response = mockMvc.perform(get("/api/person"))
                 .andReturn().getResponse();
 
+        PersonResult expectedData = createResultData();
+
+
         assertEquals(200, response.getStatus());
-        assertEquals(mapper.writeValueAsString(expectedResult), response.getContentAsString());
+        assertEquals(mapper.writeValueAsString(expectedResult), mapper.writeValueAsString(expectedResult));
+        assertEquals(mapper.writeValueAsString(expectedData), response.getContentAsString());
+    }
+
+    private PersonResult createResultData() {
+        PersonResult result = new PersonResult();
+        result.setGender("Male");
+        result.setFullName("Mr. Uzumaki Naruto");
+        result.setAddress("Buahbatu, Bandung");
+        result.setPictures("https://randomuser.me/api/portraits/men/5.jpg");
+        return result;
     }
 
     private PersonData createPersonData() {
@@ -132,6 +146,14 @@ public class PersonControllerTest {
         picture.setThumbnail("https://randomuser.me/api/portraits/thumb/men/5.jpg");
         picture.setLarge("https://randomuser.me/api/portraits/men/5.jpg");
         picture.setMedium("https://randomuser.me/api/portraits/med/men/5.jpg");
+        results.setPicture(picture);
+
+        Info info = new Info();
+        info.setSeed("cdb0a05ce6356b4a");
+        info.setResults(1);
+        info.setPage(1);
+        info.setVersion("1.2");
+
 
         return results;
     }
