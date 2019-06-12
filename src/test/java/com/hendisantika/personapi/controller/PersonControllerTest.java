@@ -78,11 +78,6 @@ public class PersonControllerTest {
 
     @Test
     public void getPerson_Negative() throws Exception {
-        PersonData expectedResult = createPersonData();
-
-        when(restTemplate.getForObject(eq("https://randomuser.me/api2/"), eq(PersonData.class)))
-                .thenReturn(expectedResult);
-
         MockHttpServletResponse response = mockMvc.perform(get("/api/person2"))
                 .andReturn().getResponse();
 
