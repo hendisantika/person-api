@@ -1,20 +1,27 @@
 package com.hendisantika.personapi.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hendisantika.personapi.entity.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.web.server.LocalServerPort;
-import org.springframework.http.ResponseEntity;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.client.RestTemplate;
 
-import java.net.URI;
-import java.net.URISyntaxException;
+import java.util.Collections;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.when;
+import static org.mockito.MockitoAnnotations.initMocks;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
 /**
  * Created by IntelliJ IDEA.
@@ -25,31 +32,108 @@ import static org.junit.Assert.assertEquals;
  * Date: 2019-06-11
  * Time: 15:13
  */
-@RunWith(SpringRunner.class)
+@RunWith(MockitoJUnitRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class PersonControllerTest {
 
     @Mock
     RestTemplate restTemplate;
 
-    @LocalServerPort
+    @Value("${local.server.port}")
     int randomServerPort;
+
+    @InjectMocks
+    private PersonController controller;
+
+    private MockMvc mockMvc;
+
+    private ObjectMapper mapper = new ObjectMapper();
 
     @Before
     public void setUp() throws Exception {
-        MockitoAnnotations.initMocks(this);
+        initMocks(this);
+
+        mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
     }
 
     @Test
-    public void getPerson_Positive() throws URISyntaxException {
-        final String baseUrl = "http://localhost:" + randomServerPort + "/api/person";
-//        final String baseUrl = "https://randomuser.me/api/";
-        URI uri = new URI(baseUrl);
+    public void getPerson_Positive() throws Exception {
+        PersonData expectedResult = createPersonData();
 
-        ResponseEntity<String> result = restTemplate.getForEntity(uri, String.class);
+        when(restTemplate.getForObject(eq("https://randomuser.me/api/"), eq(PersonData.class)))
+                .thenReturn(expectedResult);
 
-        //Verify request succeed
-        assertEquals(200, result.getStatusCodeValue());
-        assertEquals(true, result.getBody().contains("results"));
+        MockHttpServletResponse response = mockMvc.perform(get("/api/person"))
+                .andReturn().getResponse();
+
+        assertEquals(200, response.getStatus());
+        assertEquals(mapper.writeValueAsString(expectedResult), response.getContentAsString());
     }
+
+    private PersonData createPersonData() {
+        PersonData result = new PersonData();
+        result.setResults(Collections.singletonList(createResults()));
+
+        return result;
+    }
+
+    private Results createResults() {
+        Results results = new Results();
+
+        results.setNat("RK");
+        results.setGender("Male");
+        results.setPhone("123456789");
+        Dob dob = new Dob();
+        dob.setDate("1988-08-17T11:11:17Z");
+        dob.setAge("30");
+        results.setDob(dob);
+
+        Name name = new Name();
+        name.setTitle("Mr.");
+        name.setFirst("Uzumaki");
+        name.setLast("Naruto");
+        results.setName(name);
+
+        Registered registered = new Registered();
+        registered.setDate("2007-10-19T08:13:43Z");
+        registered.setAge("11");
+        results.setRegistered(registered);
+
+        Location location = new Location();
+        location.setCity("Bandung");
+        location.setStreet("Buahbatu");
+        location.setState("West Java");
+        location.setPostcode("40377");
+
+        Timezone timezone = new Timezone();
+        timezone.setOffset("+7:00");
+        timezone.setDescription("Asia/Jakarta");
+        location.setTimezone(timezone);
+
+        results.setLocation(location);
+
+        Id id = new Id();
+        id.setName("CPR");
+        id.setValue("512582-0715");
+
+        Login login = new Login();
+        login.setUuid("2f90d7f2-47f0-4c8d-9ef6-cd50a242e293");
+        login.setUsername("yellowgorilla803");
+        login.setPassword("hokage");
+        login.setSalt("qB9bXFZK");
+        login.setMd5("cd5a7e9a2fe8e24cf4b073bb6602ec5f");
+        login.setSha1("42387ea1a7733b18fb935f883033f66f215d9db4");
+        login.setSha256("9d4433075100fec4b97464260d3b43d0954188f16e1e5998ab1e8afdf8fa894e");
+
+        results.setCell("61706567");
+        results.setEmail("uzumaki_naruto@konohagakure.co.jp");
+
+        Picture picture = new Picture();
+        picture.setThumbnail("https://randomuser.me/api/portraits/thumb/men/5.jpg");
+        picture.setLarge("https://randomuser.me/api/portraits/men/5.jpg");
+        picture.setMedium("https://randomuser.me/api/portraits/med/men/5.jpg");
+
+        return results;
+    }
+
 }

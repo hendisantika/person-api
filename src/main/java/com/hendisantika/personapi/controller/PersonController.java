@@ -4,6 +4,7 @@ import com.hendisantika.personapi.dto.PersonResult;
 import com.hendisantika.personapi.entity.PersonData;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -24,9 +25,15 @@ public class PersonController {
 
     private static Logger logger = LogManager.getLogger(PersonController.class);
 
+    private RestTemplate restTemplate;
+
+    @Autowired
+    public PersonController(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
+    }
+
     @GetMapping("/api/person")
     PersonResult getPerson() {
-        RestTemplate restTemplate = new RestTemplate();
         PersonData data = restTemplate.getForObject("https://randomuser.me/api/", PersonData.class);
 
         logger.info("========== Origin Data ==========");
